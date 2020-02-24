@@ -1,0 +1,16 @@
+enclave {
+    include "user_types.h" /* buffer_t */
+
+    trusted {
+        public void ecall_init_IDS(void);
+    };
+
+    untrusted {
+        void ocall_print_string([in, string] const char *str);
+        void ocall_get_lines([in, string] const char *path, [out, count = 1]unsigned int* num_lines, [out, count = 1] unsigned long* pointer);
+        void ocall_destory_lines(unsigned long pointer);
+        void ocall_exit(int code);
+        void ocall_gettime([out, size=16]char* timeNow);
+    };
+
+};
