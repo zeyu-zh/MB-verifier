@@ -1,3 +1,4 @@
+#include <string.h>
 #ifndef _BLOOM_HEADER_
 #define _BLOOM_HEADER_
 
@@ -9,24 +10,24 @@
  *
  */
 typedef struct bloom{
-  // These fields are part of the public interface of this structure.
-  // Client code may read these values if desired. Client code MUST NOT
-  // modify any of these.
-  int entries;
-  double error;
-  int bits;
-  int bytes;
-  int hashes;
+    // These fields are part of the public interface of this structure.
+    // Client code may read these values if desired. Client code MUST NOT
+    // modify any of these.
+    int entries;
+    double error;
+    int bits;
+    int bytes;
+    int hashes;
 
-  // Fields below are private to the implementation. These may go away or
-  // change incompatibly at any moment. Client code MUST NOT access or rely
-  // on these.
-  double bpe;
-  unsigned char buffer[20];
-  unsigned char *bf;
-  int ready;
+    // Fields below are private to the implementation. These may go away or
+    // change incompatibly at any moment. Client code MUST NOT access or rely
+    // on these.
+    double bpe;
+    unsigned char buffer[20];
+    unsigned char *bf;
+    int ready;
 
-  bloom(){bf = buffer;};
+    bloom(){ bf = buffer; memset(bf, 0, 20);};
 } Bloom;
 
 
