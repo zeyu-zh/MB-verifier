@@ -1,0 +1,13 @@
+### utilities
+
+## create_pcap
+For generating pcap file, with different flow and packet size
+
+# Requirements
+`sudo pip install --pre scapy[basic]`
+
+## create_rules
+Generate random strings
+
+## parse_rules
+Parse *.rules file, for extracting the field of "content:"

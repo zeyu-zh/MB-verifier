@@ -21,12 +21,12 @@ int main(int argc, char *argv[]){
             getline(input, str);
             size_t start_pos = 0, end_pos;
             while ((start_pos = str.find("content:\"")) != string::npos) {
-            //    start_pos = str.find("content:\"");
-            //    if(start_pos != string::npos){
+               start_pos = str.find("content:\"");
+               if(start_pos != string::npos){
                     str = str.substr(start_pos+9, str.length()-start_pos-9);
                     end_pos = str.find("\"");
                     patterns.push_back(str.substr(0, end_pos));
-            //    }
+               }
             }
         }
         
