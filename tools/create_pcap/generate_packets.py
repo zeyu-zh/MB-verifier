@@ -6,6 +6,7 @@ import thread
 from scapy.all import *
 
 seed = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM0123456789'
+flag = [0, 0, 0, 0, 0, 0]
 
 def generate_pcap(pcap_file_path, pkt_size):
     pkts = []
@@ -19,6 +20,7 @@ def generate_pcap(pcap_file_path, pkt_size):
                 pkts.append(pkt)
     print pcap_file_path, ': writing packet to file......'
     wrpcap(pcap_file_path, pkts)
+    flag[pkt_size/200 - 1] = 1
     print pcap_file_path, ': done'
 
 
@@ -28,6 +30,6 @@ if __name__ == "__main__":
     for i in range(len(argus)):
         thread.start_new_thread( generate_pcap, argus[i] )
 
-    while 1:
+    while flag[0] + flag[1] + flag[2] + flag[3] + flag[4] + flag[5] != 6:
         pass
 
