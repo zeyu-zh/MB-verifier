@@ -103,7 +103,6 @@ bool Verification::check_pkt_bf(){
     }
 
     return true;
-
 }
 
 bool Verification::check_merkle_tree_point(){
@@ -111,7 +110,6 @@ bool Verification::check_merkle_tree_point(){
     if(root_hash != merkle_tree_point[0])
         return false;
     return true;
-
 }
 
 string Verification::get_hash_value(int i){

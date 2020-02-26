@@ -94,7 +94,6 @@ void ecall_init_IDS(void){
     VERI_DATA veri_data;
     get_pcap_data("./Pcap/m58.pcap", &veri_data);
     destory_pcap_data(&veri_data);
-
 }
 
 

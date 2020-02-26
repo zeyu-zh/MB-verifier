@@ -29,8 +29,11 @@ string encTools::SHA256(uint8_t* str, int len){
         ocall_exit(1);
         return nullptr;
     }
+    string temp = "";
+    for(int i = 0; i < 32; i++)
+        temp += ((char*)digest)[i]
 
-	return string((char*)&digest);
+	return temp;
 }
 
 string encTools::SHA256(const string & data){
@@ -44,8 +47,11 @@ string encTools::SHA256(const string & data){
         ocall_exit(1);
         return nullptr;
     }
+    string temp = "";
+    for(int i = 0; i < 32; i++)
+        temp += ((char*)digest)[i]
 
-	return string((char*)&digest);
+	return temp;
 }
 
 string encTools::timeNow(){
