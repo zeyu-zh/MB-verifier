@@ -618,8 +618,9 @@ namespace aho_corasick {
                 } else {
                     /*当前节点是某个pattern的结尾*/
                     
+                    // zzy
                     for(auto& tempstate : ac_queue.front()->get_emits())
-                        bloom_add(&(ac_queue.front()->d_bloom), tempstate->first.c_str(), sizeof(tempstate->first.c_str()));
+                        bloom_add(&(ac_queue.front()->d_bloom), tempstate.first.c_str(), tempstate.first.length());
 
                 }
                 ac_queue.pop();

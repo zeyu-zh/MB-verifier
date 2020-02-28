@@ -31,7 +31,7 @@ string encTools::SHA256(uint8_t* str, int len){
     }
     string temp = "";
     for(int i = 0; i < 32; i++)
-        temp += ((char*)digest)[i]
+        temp += ((char*)digest)[i];
 
 	return temp;
 }
@@ -49,7 +49,7 @@ string encTools::SHA256(const string & data){
     }
     string temp = "";
     for(int i = 0; i < 32; i++)
-        temp += ((char*)digest)[i]
+        temp += ((char*)digest)[i];
 
 	return temp;
 }
