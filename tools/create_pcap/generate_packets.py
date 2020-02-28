@@ -10,6 +10,7 @@ flag = [0, 0, 0, 0, 0, 0]
 
 def generate_pcap(pcap_file_path, pkt_size):
     pkts = []
+    
     for srcport in range(7000, 7050):
         for dstport in range(7000, 7100):
             for pkt_num in range(50):
@@ -18,6 +19,7 @@ def generate_pcap(pcap_file_path, pkt_size):
                     data.append(random.choice(seed))
                 pkt = IP(src = '127.0.0.1', dst = '127.0.0.1')/UDP(sport = srcport, dport = dstport)/"".join(data)
                 pkts.append(pkt)
+
     print pcap_file_path, ': writing packet to file......'
     wrpcap(pcap_file_path, pkts)
     flag[pkt_size/200 - 1] = 1
