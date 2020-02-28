@@ -27,4 +27,4 @@ all:
 
 .PHONE = clean
 clean:
-	rm ./ac-trie *.o
+	@rm ./ac-trie *.o
