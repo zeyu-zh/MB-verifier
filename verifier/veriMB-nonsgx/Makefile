@@ -5,8 +5,8 @@ SOURCES1 := $(wildcard *.cpp)
 SOURCES2 := base64/base64.cpp
 SOURCES3 := bloom/bloom.cpp
 SOURCES4 := murmurhash/MurmurHash.cpp
-SOURCES5 := $(wildcard Verimb/*.cpp)
-SOURCES6 := Verimb/ac/ac_adaptor.cpp
+SOURCES5 := $(wildcard verimb/*.cpp)
+SOURCES6 := verimb/ac/ac_adaptor.cpp
 SOURCES := $(SOURCES1) $(SOURCES2) $(SOURCES3) $(SOURCES4) $(SOURCES5) $(SOURCES6)
 
 OBJECTS1 := $(patsubst %.cpp, %.o, $(SOURCES1))
@@ -18,7 +18,7 @@ OBJECTS6 := ac_adaptor.o
 
 
 OBJECTS := $(OBJECTS1) $(OBJECTS2) $(OBJECTS3) $(OBJECTS4) $(OBJECTS5) $(OBJECTS6)
-HEADERS :=  -Iipp/include -IVerimb -IVerimb/ac/ -Ibase64 -Ibloom -Imurmurhash -I/usr/local/include/ 
+HEADERS :=  -Iipp/include -Iverimb -Iverimb/ac/ -Ibase64 -Ibloom -Imurmurhash -I/usr/local/include/ 
 
 .PHONY = all
 all:
