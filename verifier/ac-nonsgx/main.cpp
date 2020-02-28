@@ -10,7 +10,7 @@ PatternSet patterns;
 ACAdaptor* engine;
 
 
-string pattern_path = "../Rules/snort_10000.pat";
+string pattern_path = "../../rules/snort_10000.pat";
 
 void print_patterns(PatternSet& ptns)
 {

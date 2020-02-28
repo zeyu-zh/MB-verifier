@@ -84,17 +84,16 @@ void ecall_init_IDS(void){
     memset(g_sha256_key, 'a', 16);
 
     /* init ac trie*/
-    PatternLoader::load_pattern_file("../Rules/snort_5779.pat", patterns);
+    PatternLoader::load_pattern_file("../../rules/snort_5779.pat", patterns);
     engine = new ACAdaptor();
     engine->init(patterns);
     aho_corasick::state<char> state;
     state.get_all_states();
 
     /* parse pcap and verfiy */
-    VERI_DATA veri_data;
-    get_pcap_data("./Pcap/m58.pcap", &veri_data);
-    destory_pcap_data(&veri_data);
-
+    // VERI_DATA veri_data;
+    // get_pcap_data("../../pcap/m58.pcap", &veri_data);
+    // destory_pcap_data(&veri_data);
 }
 
 

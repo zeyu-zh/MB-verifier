@@ -3,7 +3,7 @@
 #include "sgx_trts.h"
 #include "Enclave_t.h"
 #include "Enclave.h"
-
+#include <sgx_tcrypto.h>
 using namespace std;
 
 
