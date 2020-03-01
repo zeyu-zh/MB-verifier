@@ -84,7 +84,7 @@ void ecall_init_IDS(void){
     memset(g_sha256_key, 'a', 16);
 
     /* init ac trie*/
-    PatternLoader::load_pattern_file("../../rules/snort_5779.pat", patterns);
+    PatternLoader::load_pattern_file("../../rules/etopen_63615.pat", patterns);
     engine = new ACAdaptor();
     engine->init(patterns);
     aho_corasick::state<char> state;
