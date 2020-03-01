@@ -38,7 +38,7 @@ def generate_pcap(pcap_file_path, pkt_size, is_etopen, probability):
                 if(len(data) < pkt_size):
                     for i in range(pkt_size - len(data)):
                         data.append(random.choice(seed))
-                pkt = IP(src = '127.0.0.1', dst = '127.0.0.1')/UDP(sport = srcport, dport = dstport)/"".join(data)
+                pkt = Ether()/IP(src = '127.0.0.1', dst = '127.0.0.1')/UDP(sport = srcport, dport = dstport)/"".join(data)
                 pkts.append(pkt)
 
     print pcap_file_path, ': writing packet to file......'
