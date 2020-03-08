@@ -495,6 +495,7 @@ namespace aho_corasick {
 				store_emits(pos, cur_state, collected_emits);
 				pos++;
 			}
+
 			if (d_config.is_only_whole_words()) {
 				remove_partial_matches(text, collected_emits);
 			}
@@ -503,7 +504,10 @@ namespace aho_corasick {
 				auto tmp = tree.remove_overlaps(collected_emits);
 				collected_emits.swap(tmp);
 			}
+
+            
 		}
+    
 
 	private:
 		token_type create_fragment(const typename token_type::emit_type& e, string_ref_type text, size_t last_pos) const {

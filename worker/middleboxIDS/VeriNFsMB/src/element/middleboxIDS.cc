@@ -116,11 +116,10 @@ int MiddleboxIDS::initialize(ErrorHandler *errh)
 	pktLogger.open(string(pktOutputPath).append(outputExtension));
 	pktContainer.reserve(maxPktUsed);
 
-    pktLogger<<"pkt大小(Byte),用时(ns)"<<endl;
+    //pktLogger<<"pktLength(Byte),time(ns)"<<endl;
 
 	validTotalPkgCount = 0;
 	boxCounter.no = 1;
-
 	VeriTools::initIDS(&pm_engine, patterns);
 	click_chatter("Load %d patterns.\n", patterns.size());
     
@@ -131,94 +130,92 @@ int MiddleboxIDS::initialize(ErrorHandler *errh)
 	preTime = encTools::timeNow();
 	activityTime = encTools::timeNow();
 
+    cnt1Time = encTools::timeNow();
+    temp_PKTs_size = 0;
+
 	return 0;
 }
 
 void MiddleboxIDS::push(int port, Packet * p_in)
 {
-	//click_chatter("push()\n");
-    if (localMode&& validTotalPkgCount >= maxPktUsed - 10)
-	{
-		for (auto it = pktContainer.begin(); it != pktContainer.end(); ++it)
-		{
-			pktLogger << *it;
-		}
-		click_chatter("===============================================\n");
-		click_chatter("Write file end.\n");
-		click_chatter("===============================================\n");
-		validTotalPkgCount = 0;
-	}
+    // if (localMode&& validTotalPkgCount >= maxPktUsed - 10)
+	// {
+	// 	for (auto it = pktContainer.begin(); it != pktContainer.end(); ++it)
+	// 	{
+	// 		pktLogger << *it;
+	// 	}
+	// 	click_chatter("===============================================\n");
+	// 	click_chatter("Write file end.\n");
+	// 	click_chatter("===============================================\n");
+	// 	validTotalPkgCount = 0;
+	// }
 
 	std::string beginTime = encTools::timeNow();
 
-
-
-
-
-
-    if (!VeriTools::isTestPacket(p_in))
-	{
-		click_chatter("is not test_packer\n");
-        if (justSend)
-		{
-			click_chatter("is justSend\n");
-            WritablePacket *p = p_in->uniqueify();
-			//########################  different in each box
-			VeriTools::reDirectionPacket(p, boxIDS_src_ip, boxIDS_src_mac, boxIDS_dst_ip, boxIDS_dst_mac);
-			ready_packet.push_back(p);
-			boxCounter.pktCount += 1;
-			boxCounter.pktSize += p_in->length();
-			boxCounter.pktPageloadSize += PktReader(p_in).getDataLength();
-			VeriTools::checkElementCounter(boxCounter, preTime, eleContainer);
-			++validTotalPkgCount;
-			if (validTotalPkgCount == maxPktUsed)
-			{
-				for (auto it = eleContainer.begin(); it != eleContainer.end(); ++it)
-				{
-					boxLogger << *it;
-				}
-				click_chatter("wait to write :%d\n", validTotalPkgCount);
-			}
-		}
-		else
-		{
-			   //FromDevice所有包都会到这里
-            //click_chatter("isn't justSend\n");
-            static bool wroteFile = false;
-			static string waitTime = "";
-			if (!wroteFile && (validTotalPkgCount == maxPktUsed || encTools::differTimeInNsec(activityTime.data(), encTools::timeNow().data()) > elementCounterBaseGap * 10.0))
-			{
-				if (waitTime.size() > 0)
-				{
-					if (encTools::differTimeInNsec(waitTime.data(), encTools::timeNow().data()) > elementCounterBaseGap*2)
-					{
-						for (auto it = eleContainer.begin(); it != eleContainer.end(); ++it)
-						{
-							boxLogger << *it;
-						}
-						for (auto it = pktContainer.begin(); it != pktContainer.end(); ++it)
-						{
-							pktLogger << *it;
-						}
-						wroteFile = true;
-						click_chatter("===============================================\n");
-						click_chatter("Write file end.\n");
-						click_chatter("===============================================\n");
-					}
-				}
-				else
-				{
-					click_chatter("===============================================\n");
-					click_chatter("wait to write :%d\n", validTotalPkgCount);
-					click_chatter("box avg use %lf ns.\n", boxTotalTime / maxPktUsed);
-					click_chatter("===============================================\n");
-					waitTime = encTools::timeNow();
-				}
-			}
-			p_in->kill();
-		}
-		return;
-	}
+    //click_chatter("push()");
+    // if (!VeriTools::isTestPacket(p_in))
+	// {
+	// 	click_chatter("is not test_packer\n");
+    //     if (justSend)
+	// 	{
+	// 		click_chatter("is justSend\n");
+    //         WritablePacket *p = p_in->uniqueify();
+	// 		//########################  different in each box
+	// 		VeriTools::reDirectionPacket(p, boxIDS_src_ip, boxIDS_src_mac, boxIDS_dst_ip, boxIDS_dst_mac);
+	// 		ready_packet.push_back(p);
+	// 		boxCounter.pktCount += 1;
+	// 		boxCounter.pktSize += p_in->length();
+	// 		boxCounter.pktPageloadSize += PktReader(p_in).getDataLength();
+	// 		VeriTools::checkElementCounter(boxCounter, preTime, eleContainer);
+	// 		++validTotalPkgCount;
+	// 		if (validTotalPkgCount == maxPktUsed)
+	// 		{
+	// 			for (auto it = eleContainer.begin(); it != eleContainer.end(); ++it)
+	// 			{
+	// 				boxLogger << *it;
+	// 			}
+	// 			click_chatter("wait to write :%d\n", validTotalPkgCount);
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		   //FromDevice所有包都会到这里
+    //         //click_chatter("isn't justSend\n");
+    //         static bool wroteFile = false;
+	// 		static string waitTime = "";
+	// 		if (!wroteFile && (validTotalPkgCount == maxPktUsed || encTools::differTimeInNsec(activityTime.data(), encTools::timeNow().data()) > elementCounterBaseGap * 10.0))
+	// 		{
+	// 			if (waitTime.size() > 0)
+	// 			{
+	// 				if (encTools::differTimeInNsec(waitTime.data(), encTools::timeNow().data()) > elementCounterBaseGap*2)
+	// 				{
+	// 					for (auto it = eleContainer.begin(); it != eleContainer.end(); ++it)
+	// 					{
+	// 						boxLogger << *it;
+	// 					}
+	// 					for (auto it = pktContainer.begin(); it != pktContainer.end(); ++it)
+	// 					{
+	// 						pktLogger << *it;
+	// 					}
+	// 					wroteFile = true;
+	// 					click_chatter("===============================================\n");
+	// 					click_chatter("Write file end.\n");
+	// 					click_chatter("===============================================\n");
+	// 				}
+	// 			}
+	// 			else
+	// 			{
+	// 				click_chatter("===============================================\n");
+	// 				click_chatter("wait to write :%d\n", validTotalPkgCount);
+	// 				click_chatter("box avg use %lf ns.\n", boxTotalTime / maxPktUsed);
+	// 				click_chatter("===============================================\n");
+	// 				waitTime = encTools::timeNow();
+	// 			}
+	// 		}
+	// 		p_in->kill();
+	// 	}
+	// 	return;
+	// }
     //click_chatter("I'm at point 1.\n");
 	// 1. get pkt batch
 	PktReader reader(p_in);
@@ -228,6 +225,7 @@ void MiddleboxIDS::push(int port, Packet * p_in)
     	//抽样验证的包进if
     if(pveri->flowID >= 32768)
     {
+        click_chatter("TestPacket");
         pveri->flowID = pveri->flowID - 32768;
         if (pveri->flowID == trickFlowID){
             //当前的包是最后一个用来检验的包
@@ -239,6 +237,7 @@ void MiddleboxIDS::push(int port, Packet * p_in)
             WritablePacket *p = p_in->uniqueify();
             std::vector<int> node;
             VeriTools::patternMatching(pm_engine, p->data(), p->length(), node);
+            
             //下面需要将pktID和node下标写入文件的一行中，空格隔开
             for(int i : node)
                 selected_nodes[pveri->batchID].insert(i);
@@ -259,7 +258,6 @@ void MiddleboxIDS::push(int port, Packet * p_in)
 		VeriTools::initBoxBatch(batch, pveri->batchID, flowBasedVerify, IDS);
 		batch.readyToSendRoot = false;
 	}
-
 	WritablePacket *p = 0;
 
 	// 2. check if special pkt
@@ -313,20 +311,34 @@ void MiddleboxIDS::push(int port, Packet * p_in)
 		}
 		
         //click_chatter("get 1");
-
         std::vector<int> node;
-        node.reserve(1);
-        VeriTools::patternMatching(pm_engine, p->data(), p->length(), node);
-        //click_chatter("get 2");
         
+        node.reserve(1);
+        
+        temp_PKTs_size += p->length();
+
+        VeriTools::patternMatching(pm_engine, p->data(), p->length(), node);
+
+        //click_chatter("%d", node.size());
+
+        //click_chatter("get 2");
         std::string HMAC_str = "";
         for(int i = 0; i < node.size();i++)
         {
-            for(int j = 0; j < 16 ; j++)
-                HMAC_str+=(char)(((ACAdaptor*)pm_engine)->ac.nodeHMAC[node[i]][j]);
+            if(HMAC_str.length() == 0)
+            {
+                for(int j = 0; j < 16 ; j++)
+                    HMAC_str+=(char)(((ACAdaptor*)pm_engine)->ac.nodeHMAC[node[i]][j]);
+            }
+            else
+            {
+                for(int j = 0; j < 16 ; j++)
+                    HMAC_str[j] = (char)((int)((char)(((ACAdaptor*)pm_engine)->ac.nodeHMAC[node[i]][j])) + (int)(HMAC_str[j]));
+            }
         }
-
         //click_chatter("get 2");
+
+        //click_chatter("%d", HMAC_str.length());
 
 		VeriTools::reDirectionPacket(p, boxIDS_src_ip, boxIDS_src_mac, boxIDS_dst_ip, boxIDS_dst_mac);
 		ready_packet.push_back(p);
@@ -340,10 +352,9 @@ void MiddleboxIDS::push(int port, Packet * p_in)
 			//click_chatter("%d\n", (int)VeriTools::fflowIDS(p));
             VeriTools::updateFlowVeri(veri, HMAC_str, p);//修改了内部功能实现
 		}
-
 		activityTime = encTools::timeNow();
 
-        pktLogger<< p->length() <<","<<encTools::differTimeInNsec(beginTime.data(), activityTime.data())<<endl;
+        //pktLogger<< p->length() <<","<<encTools::differTimeInNsec(beginTime.data(), activityTime.data())<<endl;
 
 		if (!startTime.size())
 		{
@@ -404,6 +415,13 @@ void MiddleboxIDS::push(int port, Packet * p_in)
 				}
 			}
 	boxTotalTime += encTools::differTimeInNsec(beginTime.data(), encTools::timeNow().data());
+
+    if(encTools::differTimeInNsec(cnt1Time.data(), encTools::timeNow().data()) >= 1000000000)
+    {
+        pktLogger << temp_PKTs_size <<endl;
+        temp_PKTs_size = 0;
+        cnt1Time = encTools::timeNow();
+    }
 }
 
 Packet* MiddleboxIDS::pull(int port) {

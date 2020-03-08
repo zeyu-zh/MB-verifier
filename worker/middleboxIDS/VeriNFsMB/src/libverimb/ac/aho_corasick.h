@@ -32,6 +32,7 @@
 #include <queue>
 #include <utility>
 #include <vector>
+#include <algorithm>
 #include <string>
 #include <fstream>
 #include <iostream>
@@ -550,26 +551,26 @@ namespace aho_corasick {
 			check_construct_failure_states();
 			size_t pos = 0;
 			state_ptr_type cur_state = d_root.get();
-			//emit_collection collected_emits;
+			emit_collection collected_emits;
 			for (auto c : text) {
 				if (d_config.is_case_insensitive()) {
 					c = std::tolower(c);
 				}
 				cur_state = get_state(cur_state, c, ringer);//ringer返回节点顺序字符串
 
-				//store_emits(pos, cur_state, collected_emits);
-				//pos++;
+				store_emits(pos, cur_state, collected_emits);
+				pos++;
 			}
             
             
-            // if (d_config.is_only_whole_words()) {
-			// 	remove_partial_matches(text, collected_emits);
-			// }
-			// if (!d_config.is_allow_overlaps()) {
-			// 	interval_tree<emit_type> tree(typename interval_tree<emit_type>::interval_collection(collected_emits.begin(), collected_emits.end()));
-			// 	auto tmp = tree.remove_overlaps(collected_emits);
-			// 	collected_emits.swap(tmp);
-			// }
+            if (d_config.is_only_whole_words()) {
+				remove_partial_matches(text, collected_emits);
+			}
+			if (!d_config.is_allow_overlaps()) {
+				interval_tree<emit_type> tree(typename interval_tree<emit_type>::interval_collection(collected_emits.begin(), collected_emits.end()));
+				auto tmp = tree.remove_overlaps(collected_emits);
+				collected_emits.swap(tmp);
+			}
 		}
 
         void parse_text(string_type text, uint16_t id, std::vector<int>& node) {
@@ -577,18 +578,45 @@ namespace aho_corasick {
 			check_construct_failure_states();
 			size_t pos = 0;
 			state_ptr_type cur_state = d_root.get();
-			//emit_collection collected_emits;
+			emit_collection collected_emits;
 			for (auto c : text) {
 				if (d_config.is_case_insensitive()) {
 					c = std::tolower(c);
 				}
 				cur_state = get_state(cur_state, c, node);//node返回节点下标顺序
 
-				//store_emits(pos, cur_state, collected_emits);
-				//pos++;
+				store_emits(pos, cur_state, collected_emits);
+				pos++;
 			}
+
+            if (d_config.is_only_whole_words()) {
+				remove_partial_matches(text, collected_emits);
+			}
+			if (!d_config.is_allow_overlaps()) {
+				interval_tree<emit_type> tree(typename interval_tree<emit_type>::interval_collection(collected_emits.begin(), collected_emits.end()));
+				auto tmp = tree.remove_overlaps(collected_emits);
+				collected_emits.swap(tmp);
+			}
+
             
 		}
+
+        void outputTOP1()
+        {
+            std::vector<int> ptn_cnt;
+            for(auto it : d_root -> all_states)
+            {
+                ptn_cnt.push_back(it->d_emits.size());
+            }
+            sort(ptn_cnt.begin(), ptn_cnt.end());
+            int temp = 0;
+            for(int i = ptn_cnt.size()-1; i >= ptn_cnt.size()-1; i-- )
+            {
+                temp += ptn_cnt[i];
+            }
+            click_chatter("%d", temp);
+        }
+
 
 	private:
 		token_type create_fragment(const typename token_type::emit_type& e, string_ref_type text, size_t last_pos) const {

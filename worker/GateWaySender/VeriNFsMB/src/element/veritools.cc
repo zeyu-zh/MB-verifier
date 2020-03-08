@@ -212,8 +212,8 @@ std::string VeriTools::fiveTuple(Packet * pkt_in)
 	// because the ip and port need modify to send packet to next packet
 
 	PktReader reader(pkt_in);
-    //click_chatter(to_string(reader.getIPHeaderLength()).c_str());
-	if (reader.getIPHeaderLength() == ip_default_len + sizeof(VeriHeader))
+	
+    if (reader.getIPHeaderLength() == ip_default_len + sizeof(VeriHeader))
 	{
 		VeriHeader* pveri = (VeriHeader*)reader.getIpOption();
 		return string().append((char*)&pveri->batchID, sizeof(pveri->batchID))

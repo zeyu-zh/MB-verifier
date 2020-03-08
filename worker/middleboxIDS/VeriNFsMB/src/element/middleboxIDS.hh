@@ -39,6 +39,9 @@ protected:
 	std::ofstream boxLogger;
 	std::ofstream pktLogger;
 
+    int temp_PKTs_size;
+    std::string cnt1Time;
+
 	std::vector<std::string> eleContainer;
 	std::vector<std::string> pktContainer;
 

@@ -124,6 +124,11 @@ int GatewaySender::initialize(ErrorHandler *errh)
 	pkt1Logger.open(string(pktOutputPath).append("1").append(outputExtension));
 	pkt2Logger.open(string(pktOutputPath).append("2").append(outputExtension));
 
+
+    pktLogger.open(string(pktOutputPath).append(outputExtension));
+
+    //pktLogger<<"输入pkt大小(byte),输出pkt大小(byte),用时(ns)"<<std::endl;
+
 	gateway1Counter.no = 1;
 	gateway2Counter.no = 1;
 
@@ -134,6 +139,8 @@ int GatewaySender::initialize(ErrorHandler *errh)
 	preTime2 = encTools::timeNow();
 	activityTime = encTools::timeNow();
 
+
+    temp_PKTs_size = 0;
 
 	totalPktCount = 0;
 	totalGateway1Time = 0;
@@ -150,6 +157,8 @@ int GatewaySender::initialize(ErrorHandler *errh)
 	{
 
 	}
+
+    cnt1Time = encTools::timeNow();
 
 	return 0;
 }
@@ -178,7 +187,8 @@ void GatewaySender::push(int port, Packet * p_in)
 
 	if (port == 0)
 	{
-		//end flag
+		//click_chatter("0");
+        //end flag
 		if (++totalPktCount > maxPktUsed)
 		{
 			p_in->kill();
@@ -240,8 +250,17 @@ void GatewaySender::push(int port, Packet * p_in)
 		}
 		orgflow.packetCount++;
 
+
+
+        int output1 = p_in->length();
+
+        temp_PKTs_size += output1;
+
 		// 2. add veriHeader to pkt
 		WritablePacket *p = addVeriHeader(p_in);
+
+        //click_chatter("2   %d", p->length());
+
 		VeriTools::setPktCounter(pkt1Counter, p);
 
 		// 3. save this pkt to flow and batch
@@ -260,9 +279,19 @@ void GatewaySender::push(int port, Packet * p_in)
 			memcpy(pktCache[totalPktCount - 1], p->data(), p->length());
 		}
 
+
+
 		// 6. prepare to send pkt 
 		VeriTools::reDirectionPacket(p, gateway1_src_ip, gateway1_src_mac, gateway1_dst_ip, gateway1_dst_mac);
 		//VeriTools::showPacket(p);
+
+        int output2 = p->length();
+
+        //click_chatter("3   %d", p->length());
+
+        std::string endTime = encTools::timeNow();
+
+        //pktLogger << output1 << "," << output2 << "," << encTools::differTimeInNsec(beginTime.data(), endTime.data()) << std::endl;
 
 
 		// 5. mark timestamp and send
@@ -326,10 +355,22 @@ void GatewaySender::push(int port, Packet * p_in)
 		}
 
 		totalGateway1Time += encTools::differTimeInNsec(beginTime.data(), encTools::timeNow().data());
+
+
+        // if(encTools::differTimeInNsec(cnt1Time.data(), encTools::timeNow().data()) >= 1000000000)
+        // {
+        //     pktLogger << temp_PKTs_size << std::endl;
+        //     temp_PKTs_size = 0;
+        //     cnt1Time = encTools::timeNow();
+
+        // }
+
+
 	}
 	else if (port == 1)
 	{
-		if (!VeriTools::isTestPacket(p_in))
+		//click_chatter("1");
+        if (!VeriTools::isTestPacket(p_in))
 		{
 			if (justSend)
 			{

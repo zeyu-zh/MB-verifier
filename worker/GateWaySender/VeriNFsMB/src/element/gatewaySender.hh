@@ -49,6 +49,10 @@ protected:
 	std::string startTime2;
 	std::string preTime1;
 	std::string preTime2;
+
+    std::string cnt1Time;
+    int temp_PKTs_size;
+
 	elementCounter gateway1Counter;
 	elementCounter gateway2Counter;
 
@@ -61,6 +65,8 @@ protected:
 	std::ofstream gateway2Logger;
 	std::ofstream pkt1Logger;
 	std::ofstream pkt2Logger;
+    std::ofstream pktLogger;
+    
 
 	// deque to sen pkt
 	std::deque<Packet*> ready_packet;

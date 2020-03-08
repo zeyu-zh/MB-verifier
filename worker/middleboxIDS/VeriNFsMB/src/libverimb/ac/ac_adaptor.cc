@@ -22,6 +22,7 @@ void ACAdaptor::init(const PatternSet& patterns)
         str.assign((char *)patterns[i].data(), patterns[i].size());
         ac.insert(str);
     }
+    //ac.outputTOP1();
 }
 
 void ACAdaptor::process(uint16_t id, const unsigned char* payload, int length, std::string& ringer)

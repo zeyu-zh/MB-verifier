@@ -27,6 +27,9 @@ public:
 protected:
 	int validTotalPkgCount;
 
+
+    int temp_pkt_totle_size;
+
 	int readyToSendRoot;
 	std::string preTime;
 	std::string startTime;

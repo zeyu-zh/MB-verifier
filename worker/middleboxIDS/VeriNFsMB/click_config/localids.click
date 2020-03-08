@@ -14,12 +14,12 @@ BATCH_SIZE $BATCH_SIZE, EXP_SIZE $EXP_SIZE,
 VERIFY $VERIFY, DISABLE_NETWORK $DISABLE_NETWORK, BASELINE $BASELINE,
 QUEYR_TABLE $QUEYR_TABLE, IN_CHAIN $IN_CHAIN);
 
-FromDump(./reality04_veriheader.pcap, STOP true)
+// FromDump(./reality01_veriheader.pcap, STOP true)
+// 	-> [0]box
+// 	-> ToDump(./m59.pcap);
+
+
+
+FromDevice(eth0)
 	-> [0]box
 	-> ToDump(./m59.pcap);
-
-
-
-//FromDevice(ens5, SNIFFER true)
-//	-> [0]box
-//	-> ToDevice(ens5);

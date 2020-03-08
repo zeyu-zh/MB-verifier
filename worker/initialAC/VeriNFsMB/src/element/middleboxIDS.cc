@@ -113,7 +113,7 @@ int MiddleboxIDS::initialize(ErrorHandler *errh)
 	pktLogger.open(string(pktOutputPath).append(outputExtension));
 	pktContainer.reserve(maxPktUsed);
 
-    pktLogger<<"pkt大小(Byte),用时(ns)"<<endl;
+    //pktLogger<<"原pkt大小(Byte),pkt大小(Byte),用时(ns)"<<endl;
 
 	validTotalPkgCount = 0;
 	boxCounter.no = 1;
@@ -124,6 +124,8 @@ int MiddleboxIDS::initialize(ErrorHandler *errh)
 	boxTotalTime = 0;
 	preTime = encTools::timeNow();
 	activityTime = encTools::timeNow();
+
+    temp_pkt_totle_size = 0;
 
 	return 0;
 }
@@ -141,16 +143,26 @@ void MiddleboxIDS::push(int port, Packet * p_in)
         return;
     }
     //click_chatter("data length is %d", p->length());
-
+    //pktLogger<< p->length() <<",";
     VeriTools::reDirectionPacket(p, boxIDS_src_ip, boxIDS_src_mac, boxIDS_dst_ip, boxIDS_dst_mac);
     VeriTools::patternMatching(pm_engine, p->data(), p->length());
     ready_packet.push_back(p);
     //VeriTools::showPacket(p);
     //click_chatter("data length is %d", p->length());
 
-    activityTime = encTools::timeNow();
+    temp_pkt_totle_size += p->length();
 
-    pktLogger<< p->length() <<","<<encTools::differTimeInNsec(beginTime.data(), activityTime.data())<<endl;
+    activityTime = encTools::timeNow();
+    
+
+    if(encTools::differTimeInNsec(preTime.data(), encTools::timeNow().data()) >= 1000000000)
+    {
+        pktLogger<<temp_pkt_totle_size<<endl;
+        temp_pkt_totle_size = 0;
+        preTime = encTools::timeNow();
+    }
+
+    //pktLogger<< p->length() <<","<<encTools::differTimeInNsec(beginTime.data(), activityTime.data())<<endl;
 	
 }
 
