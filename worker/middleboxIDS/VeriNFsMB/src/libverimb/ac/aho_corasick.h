@@ -588,18 +588,43 @@ namespace aho_corasick {
                 
                 for(auto tmppair : cur_state->get_emits())
                 {
-                    std::string tmphash = encTools::SHA256(tmppair.first);
+                    // std::string tmphash = encTools::SHA256(tmppair.first);
+                    // if(res.length() == 0)
+                    // {
+                    //     res = tmphash;
+                    // }
+                    // else
+                    // {
+                    //     for(int i = 0; i < 32 ; i++)
+                    //     {
+                    //         res[i] = (char)((int)(tmphash[i]) + (int)(res[i]));
+                    //     }
+                    // }
+
                     if(res.length() == 0)
                     {
-                        res = tmphash;
+                        res = tmppair.first;
                     }
                     else
                     {
-                        for(int i = 0; i < 32 ; i++)
+                        if(res.length()>=tmppair.first.length())
                         {
-                            res[i] = (char)((int)(tmphash[i]) + (int)(res[i]));
+                            for(int i = 0; i < tmppair.first.length() ; i++)
+                            {
+                                res[i] = (char)((int)(tmppair.first[i]) + (int)(res[i]));
+                            }
                         }
+                        else
+                        {
+                            for(int i = 0; i < res.length() ; i++)
+                            {
+                                res[i] = (char)((int)(tmppair.first[i]) + (int)(res[i]));
+                            }
+                            res += tmppair.first.substr(res.length());
+                        }
+                        
                     }
+                    
                 }
 				//store_emits(pos, cur_state, collected_emits);
 				//pos++;

@@ -101,8 +101,8 @@ const unsigned int merkletreeRootFlowID = trickFlowID + 1;
 const unsigned int fwDropPktFlowID		= trickFlowID + 2;
 
 const char* const firewallFilePath = "./emerging-IPF-ALL.rules";
-const char * const patternFilePath = "./snort_5779.pat";
-const char* const nodeHMACFilePath = "./hmac_bf";
+const char * const patternFilePath = "./snort_3459.pat";
+const char* const nodeHMACFilePath = "./snort_3459.output";
 
 const bool idsEngineIsAC = true;
 

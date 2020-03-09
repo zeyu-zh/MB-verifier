@@ -116,7 +116,7 @@ int MiddleboxIDS::initialize(ErrorHandler *errh)
 	pktLogger.open(string(pktOutputPath).append(outputExtension));
 	pktContainer.reserve(maxPktUsed);
 
-    pktLogger<<"pktLength(Byte),time(ns)"<<endl;
+    pktLogger<<"len-m,time"<<endl;
 
 	validTotalPkgCount = 0;
 	boxCounter.no = 1;
