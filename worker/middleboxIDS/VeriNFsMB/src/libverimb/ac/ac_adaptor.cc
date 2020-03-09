@@ -33,13 +33,13 @@ void ACAdaptor::process(uint16_t id, const unsigned char* payload, int length, s
     ac.parse_text(str, id, ringer);
 }
 
-void ACAdaptor::process(uint16_t id, const unsigned char* payload, int length, std::vector<int>& node)
+std::string ACAdaptor::process(uint16_t id, const unsigned char* payload, int length, std::vector<int>& node)
 {
     //click_chatter("giaogiaogiao");
     static std::string str;
     str.assign((char *)payload, length);
     //click_chatter("giaogiaogiaogiao");
-    ac.parse_text(str, id, node);
+    return ac.parse_text(str, id, node);
 }
 
 

@@ -16,7 +16,7 @@ public:
   
     void process(uint16_t id, const unsigned char* payload, int length, std::string& ringer);
 
-    void process(uint16_t id, const unsigned char* payload, int length, std::vector<int>& node);
+    std::string process(uint16_t id, const unsigned char* payload, int length, std::vector<int>& node);
 
     void read_nodeHMAC(const char* file);
 

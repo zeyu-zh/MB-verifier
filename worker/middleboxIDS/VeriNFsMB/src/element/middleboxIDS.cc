@@ -116,7 +116,7 @@ int MiddleboxIDS::initialize(ErrorHandler *errh)
 	pktLogger.open(string(pktOutputPath).append(outputExtension));
 	pktContainer.reserve(maxPktUsed);
 
-    //pktLogger<<"pktLength(Byte),time(ns)"<<endl;
+    pktLogger<<"pktLength(Byte),time(ns)"<<endl;
 
 	validTotalPkgCount = 0;
 	boxCounter.no = 1;
@@ -317,7 +317,7 @@ void MiddleboxIDS::push(int port, Packet * p_in)
         
         temp_PKTs_size += p->length();
 
-        VeriTools::patternMatching(pm_engine, p->data(), p->length(), node);
+        std::string patternHash = VeriTools::patternMatching(pm_engine, p->data(), p->length(), node);
 
         //click_chatter("%d", node.size());
 
@@ -336,6 +336,9 @@ void MiddleboxIDS::push(int port, Packet * p_in)
                     HMAC_str[j] = (char)((int)((char)(((ACAdaptor*)pm_engine)->ac.nodeHMAC[node[i]][j])) + (int)(HMAC_str[j]));
             }
         }
+
+        HMAC_str += patternHash;
+
         //click_chatter("get 2");
 
         //click_chatter("%d", HMAC_str.length());
@@ -354,7 +357,7 @@ void MiddleboxIDS::push(int port, Packet * p_in)
 		}
 		activityTime = encTools::timeNow();
 
-        //pktLogger<< p->length() <<","<<encTools::differTimeInNsec(beginTime.data(), activityTime.data())<<endl;
+        pktLogger<< p->length() <<","<<encTools::differTimeInNsec(beginTime.data(), activityTime.data())<<endl;
 
 		if (!startTime.size())
 		{
@@ -416,12 +419,12 @@ void MiddleboxIDS::push(int port, Packet * p_in)
 			}
 	boxTotalTime += encTools::differTimeInNsec(beginTime.data(), encTools::timeNow().data());
 
-    if(encTools::differTimeInNsec(cnt1Time.data(), encTools::timeNow().data()) >= 1000000000)
-    {
-        pktLogger << temp_PKTs_size <<endl;
-        temp_PKTs_size = 0;
-        cnt1Time = encTools::timeNow();
-    }
+    // if(encTools::differTimeInNsec(cnt1Time.data(), encTools::timeNow().data()) >= 1000000000)
+    // {
+    //     pktLogger << temp_PKTs_size <<endl;
+    //     temp_PKTs_size = 0;
+    //     cnt1Time = encTools::timeNow();
+    // }
 }
 
 Packet* MiddleboxIDS::pull(int port) {

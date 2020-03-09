@@ -347,10 +347,10 @@ std::string VeriTools::patternMatching(PMAdaptor * engine, unsigned char * data,
 std::string VeriTools::patternMatching(PMAdaptor * engine, unsigned char * data, uint32_t len, std::vector<int>& node)
 {
 	//click_chatter("giao");
-    std::string res = ""; 
-	((ACAdaptor*)engine)->process(0, data, len, node);
+
+	return ((ACAdaptor*)engine)->process(0, data, len, node);
     //click_chatter("giaogiao");
-	return res;
+
 }
 
 

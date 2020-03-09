@@ -573,30 +573,46 @@ namespace aho_corasick {
 			}
 		}
 
-        void parse_text(string_type text, uint16_t id, std::vector<int>& node) {
+        std::string parse_text(string_type text, uint16_t id, std::vector<int>& node) {
 
 			check_construct_failure_states();
-			size_t pos = 0;
+			//size_t pos = 0;
 			state_ptr_type cur_state = d_root.get();
-			emit_collection collected_emits;
+			//emit_collection collected_emits;
+            std::string res = "";
 			for (auto c : text) {
 				if (d_config.is_case_insensitive()) {
 					c = std::tolower(c);
 				}
 				cur_state = get_state(cur_state, c, node);//node返回节点下标顺序
-
-				store_emits(pos, cur_state, collected_emits);
-				pos++;
+                
+                for(auto tmppair : cur_state->get_emits())
+                {
+                    std::string tmphash = encTools::SHA256(tmppair.first);
+                    if(res.length() == 0)
+                    {
+                        res = tmphash;
+                    }
+                    else
+                    {
+                        for(int i = 0; i < 32 ; i++)
+                        {
+                            res[i] = (char)((int)(tmphash[i]) + (int)(res[i]));
+                        }
+                    }
+                }
+				//store_emits(pos, cur_state, collected_emits);
+				//pos++;
 			}
-
-            if (d_config.is_only_whole_words()) {
-				remove_partial_matches(text, collected_emits);
-			}
-			if (!d_config.is_allow_overlaps()) {
-				interval_tree<emit_type> tree(typename interval_tree<emit_type>::interval_collection(collected_emits.begin(), collected_emits.end()));
-				auto tmp = tree.remove_overlaps(collected_emits);
-				collected_emits.swap(tmp);
-			}
+            return res;
+            // if (d_config.is_only_whole_words()) {
+			// 	remove_partial_matches(text, collected_emits);
+			// }
+			// if (!d_config.is_allow_overlaps()) {
+			// 	interval_tree<emit_type> tree(typename interval_tree<emit_type>::interval_collection(collected_emits.begin(), collected_emits.end()));
+			// 	auto tmp = tree.remove_overlaps(collected_emits);
+			// 	collected_emits.swap(tmp);
+			// }
 
             
 		}
