@@ -58,6 +58,7 @@ int main(int argc, char *argv[]){
     ifstream input(argv[1]);
     set<string> patterns;
     string str;
+    int max = 0;
 
     if(input.is_open()){    
         while (!input.eof()) {
@@ -70,8 +71,12 @@ int main(int argc, char *argv[]){
                     end_pos = str.find("\"");
                     string sub_str = str.substr(0, end_pos);
                     auto result = ptrn_str_to_bytes(sub_str);
-                    if(result.size() > 4)
+                    if(result.size() > 4){
                         patterns.insert(sub_str);
+                        if(result.size() > max)
+                            max = result.size();
+                    }
+                        
                }
             }
         }
@@ -80,6 +85,7 @@ int main(int argc, char *argv[]){
         for(auto str: patterns)
             output << str << endl;
 
+        cout << max << endl;
         input.close();
         output.close();
     } else 
