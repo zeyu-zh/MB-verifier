@@ -62,7 +62,7 @@ int ocall_printf(const char* fmt, ...)
 PatternSet patterns;
 ACAdaptor* engine;
 void ecall_init_IDS(void){
-    PatternLoader::load_pattern_file("../../rules/etopen_63615.pat", patterns);
+    PatternLoader::load_pattern_file("../../rules/etopen_26763.pat", patterns);
 
     engine = new ACAdaptor();
     engine->init(patterns);

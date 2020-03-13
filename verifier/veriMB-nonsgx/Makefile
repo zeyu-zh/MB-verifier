@@ -18,7 +18,7 @@ OBJECTS6 := ac_adaptor.o
 
 
 OBJECTS := $(OBJECTS1) $(OBJECTS2) $(OBJECTS3) $(OBJECTS4) $(OBJECTS5) $(OBJECTS6)
-HEADERS :=  -Iipp/include -Iverimb -Iverimb/ac/ -Ibase64 -Ibloom -Imurmurhash -I/usr/local/include/ 
+HEADERS :=  -I./ -Iipp/include -Iverimb -Iverimb/ac/ -Ibase64 -Ibloom -Imurmurhash -I/usr/local/include/ 
 
 .PHONY = all
 all:

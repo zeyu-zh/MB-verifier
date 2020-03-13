@@ -24,6 +24,7 @@ void ACAdaptor::init(const PatternSet& patterns)
         ac.insert(str);
     }
     ac.construct_failure_states();
+    ac.construct_acc();
 }
 
 void ACAdaptor::process(uint16_t id, const unsigned char* payload, int length, std::string& ringer)

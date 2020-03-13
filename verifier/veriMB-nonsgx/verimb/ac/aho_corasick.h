@@ -14,11 +14,12 @@
 #include <fstream>
 #include <stdio.h>
 #include <stdlib.h>
-#include "bloom.h"
+//#include "bloom.h"
 #include "base64.h"
 #include <string.h>
 #include <memory.h>
 #include "ippcp.h"
+#include "key.h"
 using namespace std;
 
 
@@ -297,7 +298,8 @@ namespace aho_corasick {
 		ptr                            d_failure; // failure pointer, point to another state<CharType>
 		string_collection              d_emits; // all the patterns of current state. data structure: set<pair<string, int>>
 		int                            d_num;//在all_states中的下标
-        Bloom						   d_bloom;
+        //Bloom						   d_bloom;
+		uint8_t                        d_acc[32];
 		static std::vector<ptr> 	   all_states;
 		state(): state(0, 0) {}
 
@@ -310,7 +312,7 @@ namespace aho_corasick {
             , d_num(cnt) {
 				/*d_bloom初始化*/
 				static int i = 0;
-				bloom_init(&d_bloom, 32, 0.1);
+				//bloom_init(&d_bloom, 32, 0.1);
 			}
 
 		ptr next_state(CharType character) const {
@@ -337,7 +339,7 @@ namespace aho_corasick {
 			uint8_t* p_key = (uint8_t*)malloc(16);
 
 			//ocall_open_file(&fd, "output");
-			FILE* fd = fopen("output", "w+");
+			//FILE* fd = fopen("output", "w+");
 
 			for(const auto& a : all_states){
                 string_type temp = "";
@@ -360,8 +362,8 @@ namespace aho_corasick {
                 //int d_num
                 temp += std::to_string(a->d_num);
                 //char* d_bloom.bf 长度为20
-				for(int i = 0; i < 20; i++)
-                    temp += a->d_bloom.bf[i];
+				// for(int i = 0; i < 20; i++)
+                //     temp += a->d_bloom.bf[i];
 
 				// calculate???
 				//(const uint8_t*)temp.c_str(), temp.length(), p_key, 16, hmac, 16);
@@ -372,11 +374,11 @@ namespace aho_corasick {
 				encode_result[len] = '\n';
 				encode_result[len+1] = '\0';
 				
-				fputs(encode_result, fd);
+				//fputs(encode_result, fd);
 				//ocall_write(fd, encode_result);
 			}
 
-			fclose(fd);
+			//fclose(fd);
 		}
 
 
@@ -566,40 +568,40 @@ namespace aho_corasick {
 				collected_emits.swap(tmp);
 			}
 		}
-		void construct_Bloom() {
-			/*算每个节点的bloom*/
-            std::queue<state<char>*> ac_queue;
-            std::vector<state<char>*> root_success=d_root->get_states();
-            for(int i = 0; i < root_success.size(); i++){
-                ac_queue.push(root_success[i]);
-			}
+		// void construct_Bloom() {
+		// 	/*算每个节点的bloom*/
+        //     std::queue<state<char>*> ac_queue;
+        //     std::vector<state<char>*> root_success=d_root->get_states();
+        //     for(int i = 0; i < root_success.size(); i++){
+        //         ac_queue.push(root_success[i]);
+		// 	}
 
-			int i = 0;
-			while(!ac_queue.empty()) {
-                std::vector<state<char>*> temp_success=ac_queue.front()->get_states();
+		// 	int i = 0;
+		// 	while(!ac_queue.empty()) {
+        //         std::vector<state<char>*> temp_success=ac_queue.front()->get_states();
 				
-				for(int i = 0; i < temp_success.size(); i++)
-					ac_queue.push(temp_success[i]);
+		// 		for(int i = 0; i < temp_success.size(); i++)
+		// 			ac_queue.push(temp_success[i]);
 				
-                //suffixP指向的节点的bloom
-				//ac_queue.front()->prefix()->d_bloom
-                //当前节点的bloom
-				//ac_queue.front()->d_bloom
-				ac_queue.front()->d_bloom = ac_queue.front()->prefix()->d_bloom;
-				ac_queue.front()->d_bloom.bf = ac_queue.front()->d_bloom.buffer;				
+        //         //suffixP指向的节点的bloom
+		// 		//ac_queue.front()->prefix()->d_bloom
+        //         //当前节点的bloom
+		// 		//ac_queue.front()->d_bloom
+		// 		ac_queue.front()->d_bloom = ac_queue.front()->prefix()->d_bloom;
+		// 		ac_queue.front()->d_bloom.bf = ac_queue.front()->d_bloom.buffer;				
 
-				if(ac_queue.front()->get_emits().size()==0) {
-                    /*当前节点不是某个pattern的结尾*/
-                } else {
-                    /*当前节点是某个pattern的结尾*/
-                    char* str = (char*)(ac_queue.front()->get_emits().begin()->first.c_str());
+		// 		if(ac_queue.front()->get_emits().size()==0) {
+        //             /*当前节点不是某个pattern的结尾*/
+        //         } else {
+        //             /*当前节点是某个pattern的结尾*/
+        //             char* str = (char*)(ac_queue.front()->get_emits().begin()->first.c_str());
                     
-					//pattern str加到suffixP指向的节点的bloom上，为当前节点bloom
-					bloom_add(&(ac_queue.front()->d_bloom), str, sizeof(str));
-                }
-                ac_queue.pop();
-			}
-		}
+		// 			//pattern str加到suffixP指向的节点的bloom上，为当前节点bloom
+		// 			bloom_add(&(ac_queue.front()->d_bloom), str, sizeof(str));
+        //         }
+        //         ac_queue.pop();
+		// 	}
+		// }
 
         void construct_failure_states() {
             std::queue<state_ptr_type> q;
@@ -625,6 +627,38 @@ namespace aho_corasick {
                 }
                 q.pop();
             }
+        }
+
+
+		void construct_acc()
+        {
+            /*算每个节点的acc*/
+            uint8_t* p_key = get_key();
+            std::queue<state<char>*> ac_queue;
+            std::vector<state<char>*> root_success=d_root->get_states();
+            for(int i = 0; i < root_success.size(); i++){
+                ac_queue.push(root_success[i]);
+			}
+
+			int i = 0;
+			while(!ac_queue.empty()) {
+                std::vector<state<char>*> temp_success=ac_queue.front()->get_states();
+				
+				for(int i = 0; i < temp_success.size(); i++)
+					ac_queue.push(temp_success[i]);
+				
+                memset(ac_queue.front()->d_acc,0,32);				
+
+                for(auto& tempstate : ac_queue.front()->get_emits()){
+                    std::string temp((char*)(ac_queue.front()->d_acc));
+                    temp += tempstate.first;
+
+                    //sgx_hmac_sha256_msg((const uint8_t*)temp.c_str(), temp.length(), p_key, 16, ac_queue.front()->d_acc, 16);
+					ippsHMAC_Message((uint8_t*)temp.c_str(), temp.length(), p_key, 16, ac_queue.front()->d_acc, 16, ippHashAlg_SHA256);
+                }
+                        
+                ac_queue.pop();
+			}
         }
         
 

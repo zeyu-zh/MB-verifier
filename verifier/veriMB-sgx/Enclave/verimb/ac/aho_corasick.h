@@ -355,10 +355,10 @@ namespace aho_corasick {
 		void get_all_states(){
 			uint64_t fd;
 			uint8_t hmac[16];
-			char encode_result[30];
+			char encode_result[100];
 			uint8_t* p_key = get_key();
 
-			ocall_open_file(&fd, "output");
+			//ocall_open_file(&fd, "output");
 
 			for(const auto& a : all_states){
                 
@@ -387,11 +387,11 @@ namespace aho_corasick {
 
 				sgx_hmac_sha256_msg((const uint8_t*)temp.c_str(), temp.length(), p_key, 16, hmac, 16);
                 
-				memset(encode_result, 0, 30);
+				memset(encode_result, 0, 100);
 				int len = base64_encode(hmac, 16, encode_result);
 				encode_result[len] = '\n';
 				encode_result[len+1] = '\0';
-				ocall_write(fd, encode_result);
+				//ocall_write(fd, encode_result);
 
                 // memset(encode_result, 0, 30);
                 // len = base64_encode(a->d_bloom.bf, 20, encode_result);
@@ -399,14 +399,14 @@ namespace aho_corasick {
                 // encode_result[len+1] = '\0';
                 // ocall_write(fd, encode_result);
 
-                memset(encode_result, 0, 30);
+                memset(encode_result, 0, 100);
                 len = base64_encode(a->d_acc, 32, encode_result);
                 encode_result[len] = '\n';
                 encode_result[len+1] = '\0';
-                ocall_write(fd, encode_result);
+                //ocall_write(fd, encode_result);
 			}
 
-			ocall_close(fd);
+			//ocall_close(fd);
 		}
 
 
@@ -656,7 +656,7 @@ namespace aho_corasick {
                 memset(ac_queue.front()->d_acc,0,32);				
 
                 for(auto& tempstate : ac_queue.front()->get_emits()){
-                    string temp((char*)(ac_queue.front()->d_acc));
+                    std::string temp((char*)(ac_queue.front()->d_acc));
                     temp += tempstate.first;
 
                     sgx_hmac_sha256_msg((const uint8_t*)temp.c_str(), temp.length(), p_key, 16, ac_queue.front()->d_acc, 16);

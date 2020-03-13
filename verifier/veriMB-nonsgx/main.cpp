@@ -5,6 +5,7 @@
 #include <time.h>
 #include <random>
 #include <chrono>
+#include "key.h"
 //#include "ippcp.h"
 using namespace std;
 
@@ -12,7 +13,7 @@ PatternSet patterns;
 ACAdaptor* engine;
 
 
-string pattern_path = "../../rules/etopen_63615.pat";
+string pattern_path = "../../rules/etopen_26763.pat";
 
 void print_patterns(PatternSet& ptns)
 {
